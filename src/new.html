@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://bootswatch.com/4/cyborg/bootstrap.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche ville</title>
+</head>
+
+<body>
+    <h2>Nouvelle ville</h2>
+    <form class="from-group" id="villeForm">
+        <label>Nom : </label>
+        <input class="form-control" type="text" id="villeNom" placeholder="Nom" required autofocus>
+        <label>Latitude : </label>
+        <input class="form-control" type="text" id="villeLatitude" placeholder="Latitude" required>
+        <label>Longitude : </label>
+        <input class="form-control" type="text" id="villeLongitude" placeholder="Longitude" required>
+        <button class="btn btn-primary">Valider</button>
+    </form>
+    <script>
+        const electron = require('electron');
+        const { ipcRenderer } = electron;
+        const villeForm = document.querySelector('#villeForm')
+
+        villeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let ville = {
+                nom: document.querySelector('#villeNom').value,
+                data: {
+                    latitude: document.querySelector('#villeLatitude').value,
+                    longitude: document.querySelector('#villeLongitude').value
+                }
+            };
+            ipcRenderer.send('add-ville', ville)
+        })
+
+    </script>
+</body>
+
+</html>

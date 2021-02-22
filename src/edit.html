@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://bootswatch.com/4/cyborg/bootstrap.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche ville</title>
+</head>
+
+<body>
+    <h2>Edition ville</h2>
+    <form class="from-group" id="villeForm">
+        <label>Nom : </label>
+        <input class="form-control" type="text" id="villeNom" placeholder="Nom" required autofocus>
+        <label>Latitude : </label>
+        <input class="form-control" type="text" id="villeLatitude" placeholder="Latitude" required>
+        <label>Longitude : </label>
+        <input class="form-control" type="text" id="villeLongitude" placeholder="Longitude" required>
+        <button class="btn btn-primary">Valider</button>
+    </form>
+    <script>
+        const electron = require('electron');
+        const { ipcRenderer } = electron;
+        const villeForm = document.querySelector('#villeForm')
+
+        // récuperation de l'id ?
+        id = window.process.argv.slice(-1)[0];
+        ipcRenderer.send('get-ville-for-edit', id);
+        ipcRenderer.on('ville-back-for-edit', (e, args) => {
+            ville = JSON.parse(args)
+            document.querySelector('#villeNom').value = ville.nom
+            document.querySelector('#villeLatitude').value = ville.data.latitude
+            document.querySelector('#villeLongitude').value = ville.data.longitude
+        })
+
+        villeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let ville = {
+                _id: id,
+                nom: document.querySelector('#villeNom').value,
+                data: {
+                    latitude: document.querySelector('#villeLatitude').value,
+                    longitude: document.querySelector('#villeLongitude').value
+                }
+            };
+            console.log(ville);
+            ipcRenderer.send('edited-ville', ville)
+        })
+
+    </script>
+</body>
+
+</html>
